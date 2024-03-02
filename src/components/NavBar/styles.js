@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { NavLink } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const NavbarWrapper = styled.nav`
   display: flex;
@@ -10,8 +10,18 @@ export const NavbarWrapper = styled.nav`
   height: 100px;
   justify-content: center;
   background: #fff;
-  transition: background 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
   z-index: 2;
+  transform: translateY(${props => (props.isHidden ? '-100%' : '0')});
+
+  ${props =>
+    props.isHidden &&
+    css`
+      transform: translateY(-112%);
+    `}
+  will-change: transform;
   @media (max-width: 965px) {
     flex-direction: row;
   }
@@ -20,16 +30,20 @@ export const NavbarWrapper = styled.nav`
 export const NavbarLinkWrapper = styled.div`
   opacity: ${props => (props.menuOpen ? 1 : 0)};
   pointer-events: ${props => (props.menuOpen ? 'auto' : 'none')};
-  display: ${props => (props.menuOpen ? 'flex' : 'none')};
+  display: flex;
+  overflow: ${props => (props.menuOpen ? 'visible' : 'hidden')};
   background-color: #fff;
   height: 60px;
   width: 100%;
-  transition: opacity 0.35s cubic-bezier(0, 0.85, 0.55, 1);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
   justify-content: space-around;
   margin-top: 1rem;
 
   position: relative;
   top: 60px;
+  transform: translateY(${props => (props.menuOpen ? '0' : '-100%')});
   @media (max-width: 965px) {
     display: flex;
     width: 100%;

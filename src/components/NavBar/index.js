@@ -1,6 +1,6 @@
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import HeaderLogo from '../../assets/ricardo_logo_black_shade.png'
 import {
@@ -10,11 +10,32 @@ import {
   StyledFontAwesomeIcon,
   IconContainer,
   LogoImg,
-  ContainerLogo
+  ContainerLogo,
+  Overlay
 } from './styles'
 
 export function NavBar({ activePage, onPageChange }) {
   const [activeLink, setActiveLink] = useState(null)
+
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const [prevScrollPos, setPrevScrollPos] = useState(0)
+
+  const [isHidden, setIsHidden] = useState(false)
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY
+
+      setIsHidden(currentScrollPos > prevScrollPos && currentScrollPos > 100)
+      setPrevScrollPos(currentScrollPos)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [prevScrollPos])
   const link = [
     { page: 'Home', href: '/' },
     { page: 'Market', href: '/market' },
@@ -22,8 +43,6 @@ export function NavBar({ activePage, onPageChange }) {
     { page: 'About', href: '/about' },
     { page: 'Contact', href: '/contact' }
   ]
-
-  const [menuOpen, setMenuOpen] = useState(false)
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen)
@@ -36,7 +55,7 @@ export function NavBar({ activePage, onPageChange }) {
   }
   return (
     <>
-      <NavbarWrapper menuOpen={menuOpen}>
+      <NavbarWrapper menuOpen={menuOpen} isHidden={isHidden}>
         <IconContainer>
           <StyledFontAwesomeIcon icon={faBars} onClick={toggleMenu} />
         </IconContainer>
@@ -58,7 +77,7 @@ export function NavBar({ activePage, onPageChange }) {
           <LogoImg src={HeaderLogo} />
         </ContainerLogo>
       </NavbarWrapper>
-      {/* <Overlay menuOpen={menuOpen} onClick={toggleMenu} /> */}
+      <Overlay menuOpen={menuOpen} onClick={toggleMenu} />
     </>
   )
 }
